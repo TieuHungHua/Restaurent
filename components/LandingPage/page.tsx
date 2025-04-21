@@ -5,6 +5,8 @@ import NewFeeds from './new_feeds'
 import NewFoods from './New_foods'
 import Reserver from '../Reserver/page'
 
+import ListPost from './blog_new'
+
 const LandingPage = () => {
     return (
         <section className='flex flex-col w-full '>
@@ -16,6 +18,8 @@ const LandingPage = () => {
             <div className='w-full h-15'></div>
             <NewFoods />
             <Reserver />
+            <ListPost />
+
         </section>
     )
 }
