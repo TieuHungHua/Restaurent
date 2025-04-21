@@ -13,9 +13,9 @@ const InfUser = () => {
                 <MenuItem icon={<FaUser />} label="Tài khoản" />
             </div>
             <div className="text-xs text-gray-500 space-x-2 mt-1">
-                <span>Danh sách yêu thích</span>
+                <Link href={'/Favourite'} className='hover:underline'>Danh sách yêu thích</Link>
                 <span>|</span>
-                <span>Đặt bàn</span>
+                <Link href={'/Reserve'} className='hover:underline'>Đặt bàn</Link>
                 <span>|</span>
                 <span>Chính sách</span>
             </div>
