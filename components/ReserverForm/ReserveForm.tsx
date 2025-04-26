@@ -8,10 +8,10 @@ import { format } from "date-fns"
 import { CalendarIcon, ClockIcon } from "lucide-react"
 import { useState } from "react"
 
-const Reserver = () => {
+const ReserverForm = () => {
     const [date, setDate] = useState<Date | undefined>()
     return (
-        <div className=" bg-cover bg-center bg-no-repeat flex flex-col items-center m-28" style={{ backgroundImage: `url('https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')` }}>
+        <div className=" bg-cover bg-center bg-no-repeat flex flex-col items-center mx-28" style={{ backgroundImage: `url('https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')` }}>
             <p className="text-orange-500 text-[1.75rem] m-4">Đặt bàn ngay</p>
             <p className='text-center text-2xl font-semibold text-black m-4'>Lên lịch đặt bàn</p>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto p-4 bg-amber-50">
@@ -58,7 +58,7 @@ const Reserver = () => {
     )
 }
 
-export default Reserver
+export default ReserverForm
 
 
 // https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500

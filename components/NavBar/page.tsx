@@ -22,7 +22,7 @@ const NavBar = () => {
         {
             id: 'link4',
             title: 'Bài viết',
-            url: '/Post'
+            url: '/Blog'
         },
         {
             id: 'link5',
@@ -32,7 +32,7 @@ const NavBar = () => {
 
     ]
     return (
-        <div className='sticky top-0 z-50 shadow-sm '>
+        <div className='sticky top-0 z-50 shadow-sm  select-none'>
             {/* {desktop menu} */}
             <nav className='hidden md:grid grid-cols-3 gap-4 items-center border-b-1 border-black bg-[#e8e8e8] '>
                 <DesktopMenu links={nav} />

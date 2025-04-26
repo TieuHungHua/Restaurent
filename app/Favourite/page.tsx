@@ -51,20 +51,7 @@ const Favourite: React.FC = () => {
                 </Button>
             </aside>
             <main style={{ flex: 1, padding: '20px', marginBottom: '10px' }}>
-                <div className="flex flex-row relative w-full max-w-3xl mb-5 ">
-                    <Input
-                        type="text"
-                        placeholder="Tìm món ăn, bài viết..."
-                        className="pl-10"
-                    />
-                    <Search
-                        className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400"
-                        size={18}
-                    />
-                    <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 ml-3 rounded-md">
-                        Tìm kiếm
-                    </Button>
-                </div>
+
                 <div>
                     <FoodItemCard
                         name="Cơm chiên hải sản"

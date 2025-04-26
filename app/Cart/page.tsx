@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'
 import { Separator } from '@radix-ui/react-menubar'
 import React from 'react'
-import { CartItem } from './cartItem';
-import PaymentSumary from './paymentSumary';
+import { CartItem } from '../../components/Cart/cartItem';
+import PaymentSumary from '../../components/Cart/paymentSumary';
 
 
 interface CartSummaryProps {
@@ -19,7 +19,7 @@ const onQuantityChange = (q: number) => { };
 
 const Cart = ({ total, onApplyCoupon, onCheckout }: CartSummaryProps) => {
     return (
-        <div className='flex flex-row justify-center mt-3'>
+        <div className='flex flex-row justify-center mt-5 gap-1'>
             <div className='min-h-screen w-[40%]'>
                 <CartItem
                     imageUrl="https://sakos.vn/wp-content/uploads/2023/10/pad_thai__1__f7bd4f4931604756939e6ee41ec228d8.jpg"
@@ -43,7 +43,10 @@ const Cart = ({ total, onApplyCoupon, onCheckout }: CartSummaryProps) => {
                     onCheckout={() => console.log("Đi đến thanh toán")}
                 />
             </div>
-            <PaymentSumary />
+            <div>
+                <PaymentSumary />
+            </div>
+
         </div>
     )
 }

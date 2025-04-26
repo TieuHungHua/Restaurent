@@ -3,9 +3,10 @@ import Banner from './banner'
 import BenefitSection from './benefit'
 import NewFeeds from './new_feeds'
 import NewFoods from './New_foods'
-import Reserver from '../Reserver/page'
+import Reserver from '../ReserverForm/ReserveForm'
 
 import ListPost from './blog_new'
+import ReserverForm from '../ReserverForm/ReserveForm'
 
 const LandingPage = () => {
     return (
@@ -17,7 +18,9 @@ const LandingPage = () => {
             <NewFeeds />
             <div className='w-full h-15'></div>
             <NewFoods />
-            <Reserver />
+            <div className='w-full h-28'></div>
+            <ReserverForm />
+            <div className='w-full h-15'></div>
             <ListPost />
 
         </section>
