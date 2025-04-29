@@ -19,7 +19,7 @@ export default function Footer() {
                             <Mail size={16} /> tuonglinhleng@gmail.com
                         </li>
                         <li className="flex items-center gap-2">
-                            <Phone size={16} /> (84) 32-950-8683
+                            <Phone size={16} /> (+84) 329 508 683
                         </li>
                         <li className="flex items-center gap-2">
                             <Clock size={16} /> Các ngày trong tuần 7:00am - 22:00pm

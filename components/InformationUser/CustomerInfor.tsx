@@ -99,7 +99,7 @@ export default function CustomerProfilePage() {
                         </div>
                         <div>
                             <Label className="mb-3">Món yêu thích</Label>
-                            <Input defaultValue="Bún bò Huế, Cà phê sữa đá" />
+                            <Textarea className="max-h-[100px]" defaultValue="Bún bò Huế, Cà phê sữa đá" placeholder="Món ăn tôi yêu..." />
                         </div>
 
                     </div>

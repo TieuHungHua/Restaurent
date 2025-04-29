@@ -8,7 +8,7 @@ const InfUser = () => {
                 <MenuItem icon={<FaSearch />} label="Tìm kiếm" />
                 <Link href={'/Cart'} className='w-auto'><MenuItem icon={<FaShoppingCart />} label="Giỏ hàng" /></Link>
                 <Link href={'/Order'} className='w-auto'><MenuItem icon={<FaBox />} label="Đơn hàng" /></Link>
-                <Link href={'/Info'} className='w-auto'><MenuItem icon={<FaUser />} label="Tài khoản" /></Link>
+                <Link href={'/Information'} className='w-auto '><MenuItem icon={<FaUser />} label="Nguyễn Na" /></Link>
 
 
             </div>

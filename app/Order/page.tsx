@@ -1,4 +1,5 @@
 import OrderCard from '@/components/OrderCard/ordercard';
+import { PackageX } from "lucide-react";
 import {
     Tabs,
     TabsContent,
@@ -22,9 +23,12 @@ const Order = () => {
 
                 <TabsContent value="all">
                     <OrderCard />
+                    <OrderCard />
+                    <OrderCard />
                 </TabsContent>
 
                 <TabsContent value="processing">
+                    <OrderCard />
                     <OrderCard />
                 </TabsContent>
 
@@ -37,7 +41,10 @@ const Order = () => {
                 </TabsContent>
 
                 <TabsContent value="canceled">
-                    <OrderCard />
+                    <Empty
+                        title="Không có đơn hàng"
+                        description="Hãy tạo đơn hàng mới để bắt đầu."
+                    />
                 </TabsContent>
             </Tabs>
         </div>
@@ -45,3 +52,18 @@ const Order = () => {
 }
 
 export default Order
+
+interface EmptyProps {
+    title: string;
+    description?: string;
+}
+
+export function Empty({ title, description }: EmptyProps) {
+    return (
+        <div className="flex flex-col items-center justify-center h-60 text-center text-muted-foreground">
+            <PackageX className="w-12 h-12 mb-4" />
+            <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+            {description && <p className="mt-2">{description}</p>}
+        </div>
+    );
+}

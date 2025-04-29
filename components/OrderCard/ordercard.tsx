@@ -65,48 +65,7 @@ const OrderCard = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="grid grid-cols-6 p-2 items-center border-t text-sm">
-                    <div className="flex justify-center bg-gray-100 p-2 font-semibold text-sm">
-                        <Image src={items[0].imageUrl} alt={items[0].name} width={100} height={60} className="rounded object-cover" />
-                    </div>
-                    <p>{items[0].name}</p>
-                    <p>{items[0].price.toLocaleString()} VND</p>
-                    <p>{items[0].quantity}</p>
-                    <p>{total.toLocaleString()} VND</p>
-                    <div className="flex justify-center">
-                        <Button className="bg-orange-500 hover:bg-orange-600 text-white text-sm">
-                            Đánh giá
-                        </Button>
-                    </div>
-                </div>
-                <div className="grid grid-cols-6 p-2 items-center border-t text-sm">
-                    <div className="flex justify-center bg-gray-100 p-2 font-semibold text-sm">
-                        <Image src={items[0].imageUrl} alt={items[0].name} width={100} height={60} className="rounded object-cover" />
-                    </div>
-                    <p>{items[0].name}</p>
-                    <p>{items[0].price.toLocaleString()} VND</p>
-                    <p>{items[0].quantity}</p>
-                    <p>{total.toLocaleString()} VND</p>
-                    <div className="flex justify-center">
-                        <Button className="bg-orange-500 hover:bg-orange-600 text-white text-sm">
-                            Đánh giá
-                        </Button>
-                    </div>
-                </div>
-                <div className="grid grid-cols-6 p-2 items-center border-t text-sm">
-                    <div className="flex justify-center bg-gray-100 p-2 font-semibold text-sm">
-                        <Image src={items[0].imageUrl} alt={items[0].name} width={100} height={60} className="rounded object-cover" />
-                    </div>
-                    <p>{items[0].name}</p>
-                    <p>{items[0].price.toLocaleString()} VND</p>
-                    <p>{items[0].quantity}</p>
-                    <p>{total.toLocaleString()} VND</p>
-                    <div className="flex justify-center">
-                        <Button className="bg-orange-500 hover:bg-orange-600 text-white text-sm">
-                            Đánh giá
-                        </Button>
-                    </div>
-                </div>
+
             </div>
         </Card>
     );
