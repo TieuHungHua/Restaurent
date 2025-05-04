@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-interface CartItemProps {
+export interface CartItemProps {
     imageUrl: string;
     name: string;
     price: number;

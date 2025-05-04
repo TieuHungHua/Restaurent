@@ -1,33 +1,43 @@
 'use client'
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Detail_ProduceProps } from '@/lib/interface';
 import { Heart, Minus, Plus } from 'lucide-react';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const DetailProduct = () => {
+
+
+const DetailProduct = ({ name, costOld, costNew, description, quantity_food, url }: Detail_ProduceProps) => {
     const [quantity, setQuantity] = useState(1);
-
-    const handleIncrease = () => setQuantity((prev) => prev + 1);
+    const [percentageChange, setPercentageChange] = useState<number | null>(null);
+    const handleIncrease = () => setQuantity((prev) => (prev + 1 > quantity_food ? quantity_food : prev + 1));
     const handleDecrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
+    useEffect(() => {
+        if (costOld !== 0) {
+            const change = ((costNew - costOld) / costOld) * 100;
+            setPercentageChange(Math.round(change));
+        }
+    }, [costNew, costOld]);
     return (
+
         <Card className="flex flex-row  h-[488px] ">
             <img
-                src="https://heyyofoods.com/wp-content/uploads/2023/12/2-5.jpg" // Đổi path thành đúng ảnh bạn dùng
-                alt="Ức gà nướng"
+                src={url} // Đổi path thành đúng ảnh bạn dùng
+                alt={name}
                 width={400}
                 height={250}
                 className="rounded-lg object-cover m-4 h-[400px] w-[400px]"
             />
             <CardContent className="space-y-3 pt-4">
-                <p className=' text-2xl font-semibold text-black m-4'>Gà nướng sa tế</p>
-                <div className="text-sm text-red-500 font-medium">
-                    -3%{' '}
-                    <span className="text-lg font-bold text-red-600">195,000 VND</span>{' '}
-                    <s className="text-gray-400">225,000 VND</s>
+                <p className=' text-2xl font-semibold text-black m-4'>{name}</p>
+                <div className="text-sm text-red-500 font-medium ">
+                    {percentageChange}%{'  '}
+                    <span className="text-lg font-bold text-red-600 mr-1.5"> {costNew},000 VND</span>{' '}
+                    <s className="text-gray-400">{costOld},000 VND</s>
                 </div>
                 <p className="text-sm text-gray-600">
-                    Sử dụng phương pháp nướng cách thủy đặc biệt mang đến hương vị mới mẻ cho món Ức gà đút lò phủ lá chanh vừa giữ được sự mềm dai vừa thấm đều nước sốt hấp dẫn.
+                    {description}
                 </p>
 
                 <div className="flex items-center gap-2">

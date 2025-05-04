@@ -8,13 +8,24 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useRouter } from "next/navigation"
 
 export default function CustomerInfoPage() {
-    const [formData, setFormData] = useState({
+    const router = useRouter();
+    const [formData, setFormData] = useState<{
+        name: string;
+        email: string;
+        phone: string;
+        dob: Date | null;
+        gender: string;
+        address: string;
+        deliveryPhone: string;
+        favorites: string;
+    }>({
         name: '',
         email: '',
         phone: '',
-        dob: '',
+        dob: null,
         gender: 'khac',
         address: '',
         deliveryPhone: '',
@@ -37,15 +48,40 @@ export default function CustomerInfoPage() {
         }
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
+        const token = localStorage.getItem('access_Token')
+        e.preventDefault()
+        try {
+            const res = await fetch('http://localhost:8000/api/v1/users/guest', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    "gender": formData.gender,
+                    "birthYear": formData.dob?.getFullYear(),
+                    "address": formData.address,
+                    "phone": formData.phone,
+                }),
+            })
+            if (!res.ok) {
+                alert("Thông tin của bạn bị lỗi!! Mã lỗi: " + res.status);
+            }
+            router.push('/')
+        } catch (e) {
+            alert('lỗi thấy em rồi')
+            console.log(e)
+        }
+
         // Log to test
-        console.log("Form data:", formData)
-        console.log("Avatar file:", avatar)
+        router.push('/')
 
         // TODO: Gửi dữ liệu + file ảnh lên server
     }
+
 
     return (
         <div className="max-w-4xl mx-auto p-6">
@@ -94,7 +130,7 @@ export default function CustomerInfoPage() {
                             </div>
                             <div>
                                 <Label className="p-1.5">Ngày sinh</Label>
-                                <Input type="date" name="dob" value={formData.dob} onChange={handleChange} required />
+                                <Input type="date" name="dob" onChange={handleChange} required />
                             </div>
                         </div>
 

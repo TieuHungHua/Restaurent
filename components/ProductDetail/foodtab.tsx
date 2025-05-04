@@ -39,8 +39,16 @@ const policy = [
     }
 ]
 
-export default function FoodTabs() {
-    const [rating, setRating] = useState(5); // Rating mặc định
+interface FoodTabsProps {
+    id: string;
+    ratings: string
+    description: string;
+    ingredients: string;
+    ration: number;//khẩu phần
+    calo: number;
+}
+export default function FoodTabs({ id, ratings, description, ingredients, ration, calo }: FoodTabsProps) {
+    const [rating, setRating] = useState(ratings); // Rating mặc định
     const [reviews, setReviews] = useState([
         { id: 1, user: 'Khách hàng 1', comment: 'OK', date: '2023-04-05 00:48:02' },
         // Bạn có thể thêm nhiều đánh giá hơn ở đây
@@ -50,34 +58,31 @@ export default function FoodTabs() {
     };
     return (
         <Tabs defaultValue="description" className="w-full mt-3 ">
-            <TabsList className="mb-4">
-                <TabsTrigger value="description">Mô tả món ăn</TabsTrigger>
-                <TabsTrigger value="review">Đánh giá</TabsTrigger>
-                <TabsTrigger value="policy">Chính sách</TabsTrigger>
+            <TabsList className="w-full mb-4">
+                <TabsTrigger value="description" className='w-[110px]'>Mô tả món ăn</TabsTrigger>
+                <TabsTrigger value="review" className='w-[110px]'>Đánh giá</TabsTrigger>
+                <TabsTrigger value="policy" className='w-[110px]'>Chính sách</TabsTrigger>
             </TabsList>
 
             <TabsContent value="description" className='bg-white p-10 rounded-xl h-[300px]'>
                 <h2 className="text-lg font-semibold mb-5">Sơ lược món ăn :</h2>
-                <p className="text-sm text-gray-700 mb-2">
-                    Sử dụng phương pháp nướng cách thủy đặc biệt mang đến hương vị mới mẻ cho món Ức gà đút lò phủ lá chanh vừa giữ được sự mềm dai vừa thấm đều nước sốt hấp dẫn.
-                    Với thành phần ức gà giàu đạm, ít béo, kết hợp cùng lá chanh, lá dứa, thịt heo và các loại nấm tạo nên một món ăn đậm đà từ hương đến vị khi dùng kèm cơm trắng.
-                    Không chỉ thơm ngon, món ăn còn cung cấp dinh dưỡng phù hợp, là lựa chọn không thể bỏ qua của người ăn kiêng.
-                </p>
+                <div className="text-sm text-gray-900 mb-2">
+                    {description?.split('.')
+                        .filter(step => step.trim() !== '')
+                        .map((step, idx) => (
+                            <p key={idx} className='p-2 text-[1rem]'>{step.trim()}.</p>
+                        ))}
+                </div>
                 <h3 className="font-semibold">Thành phần :</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                    Thịt ức gà, Thịt heo xay, giò sống, nấm mèo, nấm đông cô, tỏi, ớt sừng, phô mai tỏi
-
-                </p>
-                <p className="text-sm text-gray-700 mb-2">
-
-                    Sốt ngò gai: ngò gai, húng lủi, ớt hiểm, sữa đặc, mayonnaise, chanh
+                <p className="text-sm text-[1rem] text-gray-900 mb-2">
+                    {ingredients}
                 </p>
                 <h3 className="font-semibold"> Khẩu phần :  </h3>
-                <p className="text-sm text-gray-700 mb-2"> 1 người </p>
+                <p className="text-sm text-[1rem] text-gray-900 mb-2"> {ration} người </p>
 
                 <div>
                     <strong>Năng lượng :</strong> <br />
-                    Protein - 62.5, Carbs - 4.61, Fats - 14.6 (Total Kcal - 399.84)
+                    Total Kcal - {calo}
                 </div>
                 {/* Bạn có thể thêm danh sách nguyên liệu tại đây */}
             </TabsContent>

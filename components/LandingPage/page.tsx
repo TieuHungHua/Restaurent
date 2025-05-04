@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useEffect } from 'react'
 import Banner from './banner'
 import BenefitSection from './benefit'
 import NewFeeds from './new_feeds'
@@ -7,6 +8,7 @@ import Reserver from '../ReserverForm/ReserveForm'
 
 import ListPost from './blog_new'
 import ReserverForm from '../ReserverForm/ReserveForm'
+import useFetchData from '@/hooks/userFetchData'
 
 const LandingPage = () => {
     return (

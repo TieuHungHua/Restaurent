@@ -2,24 +2,80 @@
 import FilterGroup from '@/components/FilterGroup/filter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import React, { useState } from 'react';
-import FoodItemCard from './foodItemCard';
+import React, { useCallback, useEffect, useState } from 'react';
+import FoodItemCard from '../../components/Menu/foodItemCard';
 import { Search } from 'lucide-react';
+import { FoodItemProps } from '@/lib/interface';
+import { useRouter } from 'next/navigation';
 
 
 const MenuPage: React.FC = () => {
+
+    const router = useRouter()
     const [category, setCategory] = useState('Tất cả');
     const [brand, setBrand] = useState('Tất cả');
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
-
+    const [dishes, setDishes] = useState<any[]>([]);
     const handleApply = () => {
 
     };
-    return (
-        <div style={{ display: 'flex', minHeight: '150vh' }}>
+    // ✅ Đúng key
 
-            <aside style={{ width: '320px', padding: '20px', borderRight: '1px solid #ddd', }}>
+
+    const data_food = useCallback((async () => {
+        try {
+            const token = localStorage.getItem('access_Token');
+            const response = await fetch('http://localhost:8000/api/v1/dish/guest', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+
+            })
+            if (!response.ok) {
+                throw new Error('Fetch failed: ' + response.status);
+            }
+            const data = await response.json();
+            setDishes(data.data)
+            console.log(data.data)
+        } catch (err) {
+            console.error(err);
+        }
+    }), [])
+    useEffect(() => {
+        data_food()
+    }, [data_food])
+
+    const handleAddToCart = async (id: string) => {
+        try {
+            const token = localStorage.getItem('access_Token');
+            if (!token) { router.push('/auth/Login') }
+            const response = await fetch('http://localhost:8000/api/v1/cart/add-dish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    dishId: id,
+                    number: 1,
+                }),
+
+            })
+            if (!response.ok) {
+                throw new Error('Fetch failed: ' + response.status);
+            }
+            alert("Món ăn đã được thêm!")
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    return (
+        <div className='flex m-h-[150vh' >
+            <aside className='w-[320px] p-[20px] border-r-[1px] border-solid #ddd' >
                 <FilterGroup
                     title="Danh mục"
                     options={['Tất cả', 'Khai vị', 'Món chính', 'Canh - Tiềm - Súp', 'Cơm - Mì - Cháo', 'Bánh trang miệng', 'Đồ uống']}
@@ -65,7 +121,26 @@ const MenuPage: React.FC = () => {
                     </Button>
                 </div>
                 <div>
-                    <FoodItemCard
+                    {dishes.map((dish) => {
+                        return (<FoodItemCard
+                            key={dish.id}
+                            id={dish.id}
+                            name={dish.name}
+                            slug=""
+                            description={dish.description}
+                            priceOld={dish.priceOld}
+                            priceNew={dish.priceNew}
+                            rating={dish.ration}
+                            image={dish.url}
+                            type={dish.type}
+                            quantity={31}
+                            fun={(e) => {
+                                e.preventDefault();
+                                handleAddToCart(dish.id)
+                            }}
+                        />)
+                    })}
+                    {/* <FoodItemCard
                         name="Cơm chiên hải sản"
                         slug="com-chien-hai-san"
                         description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
@@ -75,51 +150,7 @@ const MenuPage: React.FC = () => {
                         rating={0}
                         type="Món Việt"
                         image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
-                    />
-                    <FoodItemCard
-                        name="Cơm chiên hải sản"
-                        slug="com-chien-hai-san"
-                        description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
-                        priceOld={120000}
-                        priceNew={99000}
-                        quantity={31}
-                        rating={0}
-                        type="Món Việt"
-                        image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
-                    />
-                    <FoodItemCard
-                        name="Cơm chiên hải sản"
-                        slug="com-chien-hai-san"
-                        description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
-                        priceOld={120000}
-                        priceNew={99000}
-                        quantity={31}
-                        rating={0}
-                        type="Món Việt"
-                        image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
-                    />
-                    <FoodItemCard
-                        name="Cơm chiên hải sản"
-                        slug="com-chien-hai-san"
-                        description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
-                        priceOld={120000}
-                        priceNew={99000}
-                        quantity={31}
-                        rating={0}
-                        type="Món Việt"
-                        image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
-                    />
-                    <FoodItemCard
-                        name="Cơm chiên hải sản"
-                        slug="com-chien-hai-san"
-                        description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
-                        priceOld={120000}
-                        priceNew={99000}
-                        quantity={31}
-                        rating={0}
-                        type="Món Việt"
-                        image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
-                    />
+                    /> */}
                 </div>
             </main>
 

@@ -15,6 +15,11 @@ export default function PaymentSumary() {
 
             <CardContent className="space-y-4">
                 <div className="space-y-3">
+                    <Label>Tên người nhận:</Label>
+                    <Input defaultValue="" placeholder="Nhập tên của bạn..." />
+                </div>
+
+                <div className="space-y-3">
                     <Label>Số điện thoại:</Label>
                     <Input defaultValue="" placeholder="(84) xxx xxx xxxx" />
                 </div>

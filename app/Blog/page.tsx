@@ -1,10 +1,7 @@
 import Post_Detail from '@/components/Post/Post'
 import React from 'react'
 
-
 const DesciptPost = []
-
-
 
 const Blog = () => {
     return (

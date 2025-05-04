@@ -2,20 +2,11 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Eye, Heart } from "lucide-react";
 import Link from 'next/link';
+import { FoodItemProps } from '@/lib/interface';
 
-interface FoodItemProps {
-  name: string;
-  slug: string;
-  description: string;
-  priceOld: number;
-  priceNew: number;
-  quantity: number;
-  rating: number;
-  type: string;
-  image: string;
-}
 
 export default function FoodItemCard({
+  id,
   name,
   slug,
   description,
@@ -25,6 +16,7 @@ export default function FoodItemCard({
   rating,
   type,
   image,
+  fun
 }: FoodItemProps) {
   return (
     <div className="flex w-full max-w-3xl rounded-lg border p-4 shadow-sm bg-white mb-[10px]">
@@ -50,19 +42,19 @@ export default function FoodItemCard({
         <div className="flex justify-between items-center mt-4">
           <div>
             <span className="line-through text-gray-400 text-sm mr-2">
-              {priceOld.toLocaleString()} VND
+              {priceOld.toLocaleString()},000 VND
             </span>
             <span className="text-orange-500 font-bold text-lg">
-              {priceNew.toLocaleString()} VND
+              {priceNew.toString()},000 VND
             </span>
           </div>
 
           <div className="flex gap-2">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold">
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold" onClick={fun}>
               Thêm vào giỏ hàng
             </Button>
             <Button variant="outline" size="icon">
-              <Link href="/Detail_Produce">
+              <Link href={`/Menu/${id}`} >
                 <Eye size={18} />
               </Link>
             </Button>

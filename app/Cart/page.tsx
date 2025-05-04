@@ -2,8 +2,8 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'
 import { Separator } from '@radix-ui/react-menubar'
-import React from 'react'
-import { CartItem } from '../../components/Cart/cartItem';
+import React, { useState } from 'react'
+import { CartItem, CartItemProps } from '../../components/Cart/cartItem';
 import PaymentSumary from '../../components/Cart/paymentSumary';
 
 
@@ -18,6 +18,7 @@ interface CartSummaryProps {
 const onQuantityChange = (q: number) => { };
 
 const Cart = ({ total, onApplyCoupon, onCheckout }: CartSummaryProps) => {
+    const [itemCart, setItemCart] = useState<CartItemProps>()
     return (
         <div className='flex flex-row justify-center mt-5 gap-1'>
             <div className='min-h-screen w-[40%]'>

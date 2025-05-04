@@ -122,3 +122,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+.input-style {
+  @apply bg-gray-100 rounded-md px-4 py-2 w-full text-sm outline-none;
+}
+
+.btn-primary {
+  @apply mt-3 bg-orange-500 text-white font-semibold py-2 px-8 rounded-full uppercase text-xs hover:bg-orange-600;
+}

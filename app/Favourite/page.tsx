@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
 
 import { Search } from 'lucide-react';
-import FoodItemCard from '../Menu/foodItemCard';
+import FoodItemCard from '../../components/Menu/foodItemCard';
 
 
 const Favourite: React.FC = () => {

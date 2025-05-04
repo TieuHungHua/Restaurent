@@ -25,6 +25,18 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "../ui/textarea";
 
+
+
+interface CusInf {
+    name: string;
+    email: string;
+    phone: number;
+    yob: Date;
+    gender: string;
+    phoneReceive: number
+}
+
+
 export default function CustomerProfilePage() {
     return (
         <div className="min-h-screen w-full bg-gray-50 pt-4 px-4 md:px-10">

@@ -1,80 +1,142 @@
 'use client'
 
-import { useState } from "react"
+import { useCallback, useEffect, useReducer, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import ReviewItem from "./evaluate_cmt"
 import { ReviewItem_Param } from "@/lib/interface"
+import { useParams, useRouter } from "next/navigation"
 
 
+interface ReviewOfFood {
+    id: string,
+    comment: string,
+    value: string,
+    createdAt: Date,
+    guestname: string,
+    isMyEvalte: boolean
+}
+// export const mockReviews: ReviewItem_Param[] = [
 
-export const mockReviews: ReviewItem_Param[] = [
-    {
-        userName: "1",
-        rating: 5,
-        comment: "OK",
-        createdAt: new Date("2025-04-05T03:48:02"),
-        likes: 0,
-        dislikes: 0
-    },
-    {
-        userName: "2",
-        rating: 4,
-        comment: "Sản phẩm khá ổn, giao hàng nhanh.",
-        createdAt: new Date("2025-04-10T12:30:00"),
-        likes: 3,
-        dislikes: 1
-    },
-    {
-        userName: "3",
-        rating: 3,
-        comment: "Chất lượng trung bình, chưa hài lòng lắm.",
-        createdAt: new Date("2025-04-12T15:45:22"),
-        likes: 1,
-        dislikes: 2
-    },
-    {
-        userName: "4",
-        rating: 5,
-        comment: "Rất tuyệt vời, sẽ ủng hộ lần sau!",
-        createdAt: new Date("2025-04-14T09:18:45"),
-        likes: 5,
-        dislikes: 0
-    }
-]
+// ]
 
 export default function ProductReview() {
+    const params = useParams()
+    const id = params?.id as string;
+    const token = localStorage.getItem('access_Token')
     const [rating, setRating] = useState(0)
     const [hover, setHover] = useState(0)
     const [comment, setComment] = useState("")
+    const [mockReview, setReview] = useState<ReviewOfFood[]>([])
+    const [myEvaluate, setMyEvaluate] = useState<ReviewOfFood[]>([])
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        const getEvaluate = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/v1/review/by-dish/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                });
+                if (!response.ok) {
+                    console.error('Lỗi lấy review món ăn:', response.status);
+                    return;
+                }
+                const data = await response.json();
+                const myEvaluates = data.data.filter((review: ReviewOfFood) => review.isMyEvalte === true);
+                const otherEvaluates = data.data.filter((review: ReviewOfFood) => review.isMyEvalte === false);
+                setReview(otherEvaluates);
+                setMyEvaluate(myEvaluates)
+            } catch (e) {
+                console.error('Lỗi fetch:', e);
+            }
+        };
+        if (id) {
+            getEvaluate();
+        }
+    }, [id]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log(`Đánh giá: ${rating} sao`)
-        console.log(`Góp ý: ${comment}`)
-        // ở đây có thể gọi API hoặc xử lý form
+        console.log(id, rating.toString(), comment)
+        try {
+            const response = await fetch("http://localhost:8000/api/v1/review/add", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    dishId: id,
+                    value: rating.toString(),
+                    comment: comment
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Gửi đánh giá thất bại');
+            }
+            const result = await response.json();
+            // console.log('Đánh giá đã được gửi:', result);
+            setMyEvaluate([result?.data, ...myEvaluate])
+
+            console.log('a', result.data)
+        } catch (error) {
+            alert('Gửi đánh giá thất bại. Vui lòng thử lại.');
+        }
     }
+
+    const handleDelete = async (id: string) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/v1/review/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Xóa đánh giá thất bại');
+            }
+            const newMyEvaluate = myEvaluate.filter(item => item.id !== id);
+            setMyEvaluate(newMyEvaluate);
+        } catch (error) {
+            alert('Xóa đánh giá thất bại. Vui lòng thử lại.');
+        }
+
+    };
 
     return (
         <form onSubmit={handleSubmit} className="p-6 bg-white rounded-lg shadow-sm w-full  mx-auto space-y-6">
             <div>
                 <h2 className="text-xl font-bold">Tổng quan đánh giá</h2>
-                <div className="text-yellow-500 text-3xl font-semibold mt-2">{rating}/5</div>
+                <div className="text-yellow-500 text-3xl font-semibold mt-2">{4.5}/5</div>
 
             </div>
-            {mockReviews.map((review, idx) => {
-                return <ReviewItem key={idx} comment={review} />
+            {mockReview.map((review, idx) => {
+                return <ReviewItem
+                    key={review.id}
+                    my={review.isMyEvalte}
+                    creatAt={review.createdAt}
+                    name={review.guestname}
+                    rating={Number(review.value)}
+                    cmt={review.comment}
+                    fun={(e) => {
+                        e.preventDefault(); // Nếu cần
+                        handleDelete(review.id); // Gọi hàm xóa
+                    }}
+                />
+
             })}
 
-            <div>
+            <div className={`${myEvaluate.length != 0 ? "hidden" : ''}`}>
                 <Label className="block mb-2">Đánh giá chất lượng sản phẩm:</Label>
                 <div className="flex space-x-1">
                     {Array.from({ length: 5 }, (_, i) => i + 1).map((star) => (
                         <svg
                             key={star}
-                            onMouseEnter={() => setHover(star)}
-                            onMouseLeave={() => setHover(0)}
+
                             onClick={() => setRating(star)}
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
@@ -87,7 +149,7 @@ export default function ProductReview() {
                 </div>
             </div>
 
-            <div>
+            <div className={`${myEvaluate.length != 0 ? "hidden" : ''}`} >
                 <Label className="block mb-2">Góp ý của bạn:</Label>
                 <Textarea
                     placeholder="Nhập góp ý của bạn tại đây..."
@@ -97,7 +159,32 @@ export default function ProductReview() {
                 />
             </div>
 
-            <Button type="submit" className="w-40">Gửi đánh giá</Button>
+            <Button type="submit" className={`${myEvaluate.length != 0 ? "hidden" : ''}`} >Gửi đánh giá</Button>
+
+            {myEvaluate.length != 0 && (
+                <div>
+                    <p className="text-xl font-bold pb-1.5">Đánh giá của bạn: </p>
+                    {myEvaluate.map((evalu, idx) => {
+                        return (
+                            <div className="pb-3" key={evalu.id}>
+                                <ReviewItem
+
+                                    my={true}
+                                    creatAt={evalu.createdAt}
+                                    name={evalu.guestname}
+                                    rating={Number(evalu.value)}
+                                    cmt={evalu.comment}
+                                    fun={(e) => {
+                                        e.preventDefault(); // Nếu cần
+                                        handleDelete(evalu.id); // Gọi hàm xóa
+                                    }}
+                                />
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
+
         </form>
     )
 }

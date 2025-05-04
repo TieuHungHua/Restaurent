@@ -1,6 +1,7 @@
 "use client"
 import CustomerProfilePage from '@/components/InformationUser/CustomerInfor';
 
+
 import React from 'react'
 
 const Infomation = () => {
