@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link';
 import React from 'react'
 import { FaSearch, FaShoppingCart, FaBox, } from "react-icons/fa";
@@ -11,21 +12,23 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { FaUser, FaUsers, FaIdBadge, FaCreditCard } from 'react-icons/fa'
 import { MdLogout } from "react-icons/md";
-import { useInformation } from '@/hooks/useInformation';
+
 import { useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
 
 
 
 const InfUser = () => {
     const router = useRouter()
-    const { info, setInfo } = useInformation()
+    const { data: session, status } = useSession()
+
     const handleLogout = async () => {
         const token = localStorage.getItem('access_Token')
         try {
             await fetch('http://localhost:8000/api/v1/auth/logout', {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${session?.user.accessToken}`,
                 },
             })
 
@@ -33,23 +36,7 @@ const InfUser = () => {
             console.log('Loi khong the dang xuat!', e)
         }
         localStorage.clear()
-        setInfo({
-            name: "Tài khoản",
-            email: "",
-            isBan: false,
-            avatar: null,
-            role: "",
-            guest: {
-                gender: '',
-                birthYear: null,
-                address: "",
-                phone: "",
-                favouritefood: null,
-                points: null,
-                role: ""
-            },
-            shopingCart: []
-        })
+
         router.push('/auth/Login')
     }
     // console.log('đây là ở navbar', info)
@@ -61,30 +48,43 @@ const InfUser = () => {
                 <Link href={'/Order'} className='w-auto'><MenuItem icon={<FaBox />} label="Đơn hàng" /></Link>
                 {/* <Link href={'/Information'} className='w-auto '><MenuItem icon={<FaUser />} label="Nguyễn Na" /></Link> */}
 
-                <DropdownMenu >
-                    <DropdownMenuTrigger>
-                        <MenuItem icon={<FaUser />} label={info.name} />
+                {/* <DropdownMenu >
+                    <DropdownMenuTrigger onClick={() => {
+
+                    }} >
+                        <MenuItem icon={<FaUser />} label={session ? session.user.name ?? 'Tài khoản' : "Tài khoản"} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className='w-[150px]'>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
 
-                        <DropdownMenuItem>
-                            <Link href={'/Information'} className='flex items-center gap-2 \'>
-                                <FaIdBadge /> Profile
-                            </Link>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className='flex items-center gap-2'>
-                            <FaUsers /> Team
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className='flex items-center gap-2' onClick={handleLogout}>
-                            <MdLogout /> Logout
-                        </DropdownMenuItem>
                     </DropdownMenuContent>
-                </DropdownMenu>
+                </DropdownMenu> */}
+                {!session ? (
+                    <Link href={'/auth/Login'} className='w-auto'><MenuItem icon={<FaUser />} label="Tài khoản" /></Link>
+                ) : (
+                    <DropdownMenu >
+                        <DropdownMenuTrigger >
+                            <MenuItem icon={<FaUser />} label={session ? session.user.name ?? 'Tài khoản' : "Tài khoản"} />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='w-[150px]'>
+                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
 
+                            <DropdownMenuItem>
+                                <Link href={'/Information'} className='flex items-center gap-2 \'>
+                                    <FaIdBadge /> Profile
+                                </Link>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem className='flex items-center gap-2'>
+                                <FaUsers /> Team
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem className='flex items-center gap-2' onClick={() => { signOut() }}>
+                                <MdLogout /> Logout
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
             </div>
             <div className="text-xs text-gray-500 space-x-2 mt-1">
                 <Link href={'/Favourite'} className='hover:underline'>Danh sách yêu thích</Link>

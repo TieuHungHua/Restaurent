@@ -7,10 +7,11 @@ import FoodItemCard from '../../components/Menu/foodItemCard';
 import { Search } from 'lucide-react';
 import { FoodItemProps } from '@/lib/interface';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 
 const MenuPage: React.FC = () => {
-
+    const { data: session } = useSession()
     const router = useRouter()
     const [category, setCategory] = useState('Tất cả');
     const [brand, setBrand] = useState('Tất cả');
@@ -25,12 +26,12 @@ const MenuPage: React.FC = () => {
 
     const data_food = useCallback((async () => {
         try {
-            const token = localStorage.getItem('access_Token');
+
             const response = await fetch('http://localhost:8000/api/v1/dish/guest', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${session?.user.accessToken}`
                 },
 
             })
@@ -50,13 +51,12 @@ const MenuPage: React.FC = () => {
 
     const handleAddToCart = async (id: string) => {
         try {
-            const token = localStorage.getItem('access_Token');
-            if (!token) { router.push('/auth/Login') }
+
             const response = await fetch('http://localhost:8000/api/v1/cart/add-dish', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${session?.user.accessToken}`
                 },
                 body: JSON.stringify({
                     dishId: id,

@@ -9,8 +9,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 export default function CustomerInfoPage() {
+    const { data: session } = useSession()
     const router = useRouter();
     const [formData, setFormData] = useState<{
         name: string;
@@ -51,14 +53,14 @@ export default function CustomerInfoPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        const token = localStorage.getItem('access_Token')
+
         e.preventDefault()
         try {
             const res = await fetch('http://localhost:8000/api/v1/users/guest', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${session?.user.accessToken}`
                 },
                 body: JSON.stringify({
                     "gender": formData.gender,

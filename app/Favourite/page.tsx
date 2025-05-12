@@ -54,6 +54,7 @@ const Favourite: React.FC = () => {
 
 
                 <FoodItemCard
+                    id={'123'}
                     name="Cơm chiên hải sản"
                     slug="com-chien-hai-san"
                     description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
@@ -63,8 +64,10 @@ const Favourite: React.FC = () => {
                     rating={0}
                     type="Món Việt"
                     image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
+                    fun={(e) => { console.log('e') }}
                 />
                 <FoodItemCard
+                    id={'123'}
                     name="Cơm chiên hải sản"
                     slug="com-chien-hai-san"
                     description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
@@ -74,8 +77,10 @@ const Favourite: React.FC = () => {
                     rating={0}
                     type="Món Việt"
                     image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
+                    fun={(e) => { console.log('e') }}
                 />
                 <FoodItemCard
+                    id={'123'}
                     name="Cơm chiên hải sản"
                     slug="com-chien-hai-san"
                     description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
@@ -85,8 +90,10 @@ const Favourite: React.FC = () => {
                     rating={0}
                     type="Món Việt"
                     image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
+                    fun={(e) => { console.log('e') }}
                 />
                 <FoodItemCard
+                    id={'123'}
                     name="Cơm chiên hải sản"
                     slug="com-chien-hai-san"
                     description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
@@ -96,8 +103,10 @@ const Favourite: React.FC = () => {
                     rating={0}
                     type="Món Việt"
                     image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
+                    fun={(e) => { console.log('e') }}
                 />
                 <FoodItemCard
+                    id={'123'}
                     name="Cơm chiên hải sản"
                     slug="com-chien-hai-san"
                     description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
@@ -107,6 +116,7 @@ const Favourite: React.FC = () => {
                     rating={0}
                     type="Món Việt"
                     image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
+                    fun={(e) => { console.log('e') }}
                 />
 
             </main>

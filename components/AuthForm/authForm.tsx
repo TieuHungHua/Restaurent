@@ -6,13 +6,12 @@ import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useInformation } from '@/hooks/useInformation'
-import { InfoContextType } from '@/hooks/InformationContext'
 
+import { authenticate } from '@/app/action'
+import { useSession } from 'next-auth/react'
 
 export default function AuthForm() {
     const router = useRouter()
-    const { info, setInfo } = useInformation()
     const [form, setForm] = useState({
         email: '',
         password: '',
@@ -42,14 +41,7 @@ export default function AuthForm() {
             console.log("Login sucessfull", data)
             localStorage.setItem('access_Token', tokenData.access_token);
             localStorage.setItem('refresh_Token', tokenData.refresh_token);
-            setInfo((prev: InfoContextType) => ({
-                ...prev,
-                name: data.data.user.name,
-                email: data.data.user.email,
-                isBan: data.data.user.isBan,
-                role: data.data.user.role,
-                avatar: data.data.user.avatar,
-            }))
+
             console.log("Login sucessfull")
             router.push('/')
         } catch (e) {
@@ -65,7 +57,10 @@ export default function AuthForm() {
                     Sign in to your account
                 </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
+                    e.preventDefault();
+                    await authenticate(form.email, form.password);
+                }} className="space-y-6" >
                     <div>
                         <Label htmlFor="email" className='m-2'>Email address</Label>
                         <Input
@@ -114,7 +109,16 @@ export default function AuthForm() {
                         Sign up
                     </Link>
                 </p>
+                <p className="mt-6 text-center text-sm text-gray-600">
+                    Go to home page{' '}
+                    <Link
+                        href="/"
+                        className="font-medium text-indigo-600 hover:underline"
+                    >
+                        Home
+                    </Link>
+                </p>
             </div>
-        </div>
+        </div >
     )
 }

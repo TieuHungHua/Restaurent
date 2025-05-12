@@ -6,6 +6,7 @@ import Link from 'next/link'
 import React from 'react'
 
 export interface CartItemProps {
+    id: string;
     imageUrl: string;
     name: string;
     price: number;
@@ -14,7 +15,7 @@ export interface CartItemProps {
     onDelete: () => void;
 }
 
-export const CartItem = ({ imageUrl, name, price, quantity, onQuantityChange, onDelete }: CartItemProps) => {
+export const CartItem = ({ id, imageUrl, name, price, quantity, onQuantityChange, onDelete }: CartItemProps) => {
     return (
         <Card className="flex justify-between items-center p-4 mb-4 shadow-sm">
             <div className="flex items-center gap-4 ">
@@ -23,7 +24,7 @@ export const CartItem = ({ imageUrl, name, price, quantity, onQuantityChange, on
                 </div>
                 <div>
                     <h2 className="font-semibold text-base">{name}</h2>
-                    <p className="text-sm text-muted-foreground">Giá: {price.toLocaleString()} VND</p>
+                    <p className="text-sm text-muted-foreground">Giá: {price.toLocaleString()},000 VND</p>
                 </div>
             </div>
             <div className="flex items-center gap-4">
@@ -34,7 +35,7 @@ export const CartItem = ({ imageUrl, name, price, quantity, onQuantityChange, on
                     className="w-16"
                     onChange={(e) => onQuantityChange(Number(e.target.value))}
                 />
-                <p className="font-semibold">{(price * quantity).toLocaleString()} VND</p>
+                <p className="font-semibold">{(price * quantity).toLocaleString()},000 VND</p>
                 <Link href="/ProductDetail" className="text-red-500 text-sm hover:underline">Chi tiết</Link>
                 <Button variant="ghost" onClick={onDelete} className="text-red-500 text-sm">Xoá</Button>
             </div>

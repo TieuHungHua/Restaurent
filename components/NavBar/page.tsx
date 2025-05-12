@@ -27,7 +27,7 @@ const NavBar = () => {
         {
             id: 'link5',
             title: 'Liên hệ',
-            url: '/Contract'
+            url: '/Contact'
         }
 
     ]

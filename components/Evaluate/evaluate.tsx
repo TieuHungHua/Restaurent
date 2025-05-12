@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import ReviewItem from "./evaluate_cmt"
 import { ReviewItem_Param } from "@/lib/interface"
 import { useParams, useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 
 interface ReviewOfFood {
@@ -24,7 +25,7 @@ interface ReviewOfFood {
 export default function ProductReview() {
     const params = useParams()
     const id = params?.id as string;
-    const token = localStorage.getItem('access_Token')
+    const { data: session } = useSession()
     const [rating, setRating] = useState(0)
     const [hover, setHover] = useState(0)
     const [comment, setComment] = useState("")
@@ -38,7 +39,7 @@ export default function ProductReview() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${session?.user.accessToken}`
                     },
                 });
                 if (!response.ok) {
@@ -67,7 +68,7 @@ export default function ProductReview() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${session?.user.accessToken}`
                 },
                 body: JSON.stringify({
                     dishId: id,
@@ -93,7 +94,7 @@ export default function ProductReview() {
             const response = await fetch(`http://localhost:8000/api/v1/review/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${session?.user.accessToken}`
                 }
             });
             if (!response.ok) {

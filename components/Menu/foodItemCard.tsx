@@ -53,13 +53,17 @@ export default function FoodItemCard({
             <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold" onClick={fun}>
               Thêm vào giỏ hàng
             </Button>
+
+            <Link
+              href={`/Menu/${id}`}
+              className="flex items-center justify-center w-[36px] h-[36px] rounded-[8px] border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
+              aria-label="Xem chi tiết"
+            >
+              <Eye size={18} />
+            </Link>
+
             <Button variant="outline" size="icon">
-              <Link href={`/Menu/${id}`} >
-                <Eye size={18} />
-              </Link>
-            </Button>
-            <Button variant="outline" size="icon">
-              <Heart size={18} />
+              <Heart size={18} color='red' />
             </Button>
           </div>
         </div>

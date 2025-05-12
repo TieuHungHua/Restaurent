@@ -42,7 +42,7 @@ export default function RegisterPage() {
                 throw new Error(data.message || 'Registration failed')
             }
             console.log('User created successfully!')
-            
+
             router.push('/FormInformationInit')
 
         }

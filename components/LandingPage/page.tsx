@@ -4,13 +4,13 @@ import Banner from './banner'
 import BenefitSection from './benefit'
 import NewFeeds from './new_feeds'
 import NewFoods from './New_foods'
-import Reserver from '../ReserverForm/ReserveForm'
-
 import ListPost from './blog_new'
 import ReserverForm from '../ReserverForm/ReserveForm'
-import useFetchData from '@/hooks/userFetchData'
+
+
 
 const LandingPage = () => {
+
     return (
         <section className='flex flex-col w-full '>
             <Banner />

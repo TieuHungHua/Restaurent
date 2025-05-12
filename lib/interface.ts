@@ -55,3 +55,17 @@ export interface Detail_ProduceProps {
     quantity_food: number;
     url: string;
 }
+
+export interface User {
+    email: string;
+    name: string;
+    password: string;
+    isBan: boolean;
+    role: 'Guest' | 'User' | 'Admin';
+    avatar: string | null;
+}
+
+export interface Token {
+    refresh_token: string;
+    access_token: string;
+}

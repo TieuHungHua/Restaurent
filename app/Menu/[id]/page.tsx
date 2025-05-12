@@ -1,6 +1,7 @@
 'use client'
 import DetailProduct from '@/components/ProductDetail/detail_product'
 import FoodTabs from '@/components/ProductDetail/foodtab'
+import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 
 import React, { useEffect, useState } from 'react'
@@ -9,19 +10,19 @@ const page = () => {
 
     const params = useParams()
     const id = params?.id as string;
-
+    const { data: session } = useSession()
     const [food, setFood] = useState<any>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getProduct = async () => {
-            const token = localStorage.getItem('access_Token')
+
             try {
                 const response = await fetch(`http://localhost:8000/api/v1/dish/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${session?.user.accessToken}`
                     },
                 });
 
