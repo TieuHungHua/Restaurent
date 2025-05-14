@@ -41,7 +41,7 @@ const MenuPage: React.FC = () => {
             const data = await res.json()
             setDishes(data.data)
         } catch (e) {
-            alert('Fetch data search error ')
+            alert('Fetch data search error ' + e)
         }
     }
     const fetchDataFood = async () => {
@@ -65,7 +65,7 @@ const MenuPage: React.FC = () => {
             window.scrollTo({ top: 0, behavior: 'smooth', });
         } catch (error) {
             setIsLoading(false)
-            console.error("Lỗi khi lấy dữ liệu:", error);
+            alert("Lỗi khi lấy dữ liệu:" + error);
         }
     }
     useEffect(() => {
@@ -93,8 +93,8 @@ const MenuPage: React.FC = () => {
                 throw new Error('Fetch failed: 3 ' + response.status);
             }
             alert("Món ăn đã được thêm!")
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            alert("Lỗi khi thêm Món ăn:" + error);
         }
     }
 
