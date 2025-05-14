@@ -25,7 +25,12 @@ interface Order {
   listOrder: Dish[];
 }
 
-const OrderList = ({ orders }: { orders: Order[] }) => {
+interface OrderListProps {
+  orders: Order[];
+  onClick: (id: string, status: string) => void; // Truyền hàm xử lý cập nhật trạng thái
+}
+
+const OrderList = ({ orders, onClick }: OrderListProps) => {
   return (
     <div className="p-4 ">
       {orders.map((order) => (
@@ -97,17 +102,26 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
           <div className="relative flex">
             <div className="flex-1 mt-5">
               {order.status === "pending" && (
-                <Button className="bg-green-500 text-white cursor-pointer mr-10">
+                <Button
+                  className="bg-green-500 text-white cursor-pointer mr-10"
+                  onClick={() => onClick(order.id, "confirmed")}
+                >
                   Xác nhận
                 </Button>
               )}
               {order.status === "confirmed" && (
-                <Button className="bg-green-500 text-white cursor-pointer mr-10">
+                <Button
+                  className="bg-green-500 text-white cursor-pointer mr-10"
+                  onClick={() => onClick(order.id, "completed")}
+                >
                   Hoàn thành
                 </Button>
               )}
-              {order.status !== "completed" && (
-                <Button className="bg-red-500 text-white cursor-pointer ">
+              {order.status !== "completed" && order.status !== "canceled" && (
+                <Button
+                  className="bg-red-500 text-white cursor-pointer "
+                  onClick={() => onClick(order.id, "canceled")}
+                >
                   Hủy
                 </Button>
               )}
