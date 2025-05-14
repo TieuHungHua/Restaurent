@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import OrderList from "@/components/listOrder/OrderList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSession } from "next-auth/react";
 interface Dish {
   dishId: string;
   nameDish: string;
@@ -25,14 +26,14 @@ interface Order {
   listOrder: Dish[];
 }
 const OrderPageClient = () => {
+  const { data: session, status } = useSession();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [status, setStatus] = useState<string>("all");
+  const [statuss, setStatus] = useState<string>("all");
   const updateOrderStatus = async (id: string, state: string) => {
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFkODQ5NGVhLTcwOTgtNGQwOS04YWE1LTIwNjZlNDg5NDUwYiIsImVtYWlsIjoic3VwZXJBZG1pbkBleGFtcGxlLmNvbSIsIm5hbWUiOiJTdXBlciBBZG1pbiIsInJvbGUiOiJTdXBlciBBZG1pbiIsImlzQmFuIjpmYWxzZSwiYWRtaW5JZCI6ImY1MzE5NjM5LWIxOWItNDkwZi1hMTE2LWZkYzZmMGRiY2Y2YSIsImd1ZXN0SWQiOm51bGwsImlhdCI6MTc0NzEyMDA0MCwiZXhwIjoxNzQ3MjA2NDQwfQ.4wlsKBrREHnLBHWLg-Trh2S0PyTUsr4JgaLrkoZMSKU";
+    const token = session?.user.accessToken;
 
     try {
-      if (status === "all") {
+      if (statuss === "all") {
         const res = await fetch(
           `http://localhost:8000/api/v1/order/status/${id}`,
           {
@@ -41,7 +42,7 @@ const OrderPageClient = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ status: state }),
+            body: JSON.stringify({ statuss: state }),
           }
         );
       } else {
@@ -53,7 +54,7 @@ const OrderPageClient = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ status: state }),
+            body: JSON.stringify({ statuss: state }),
           }
         );
       }
@@ -66,7 +67,7 @@ const OrderPageClient = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ status: state }),
+          body: JSON.stringify({ statuss: state }),
         }
       );
       if (!res.ok) {
@@ -76,61 +77,63 @@ const OrderPageClient = () => {
       const data = await res.json();
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
-          order.id === id ? { ...order, status: state } : order
+          order.id === id ? { ...order, statuss: state } : order
         )
       );
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
     }
   };
+
+  const fetchOrders = async () => {
+    const token = session?.user.accessToken;
+    const url =
+      statuss === "all"
+        ? `http://localhost:8000/api/v1/order`
+        : `http://localhost:8000/api/v1/order?status=${statuss}`;
+    try {
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch");
+
+      const json = await res.json();
+      const ordersFromApi = json.data.orders;
+      console.log("ordersFromApi", ordersFromApi);
+
+      const formatted = ordersFromApi.map((order: any) => ({
+        id: order.id,
+        createdAt: order.createdAt,
+        phone: order.phone,
+        address: order.address,
+        nameUser: order.nameUser,
+        email: order.email,
+        note: order.note,
+        payment: order.payment,
+        status: order.status,
+        type: order.type,
+        description: order.description,
+        listOrder: order.listOrder.map((item: any) => ({
+          dishId: item.dishId,
+          nameDish: item.nameDish,
+          number: item.number,
+          url: item.url,
+        })),
+      }));
+
+      setOrders(formatted);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFkODQ5NGVhLTcwOTgtNGQwOS04YWE1LTIwNjZlNDg5NDUwYiIsImVtYWlsIjoic3VwZXJBZG1pbkBleGFtcGxlLmNvbSIsIm5hbWUiOiJTdXBlciBBZG1pbiIsInJvbGUiOiJTdXBlciBBZG1pbiIsImlzQmFuIjpmYWxzZSwiYWRtaW5JZCI6ImY1MzE5NjM5LWIxOWItNDkwZi1hMTE2LWZkYzZmMGRiY2Y2YSIsImd1ZXN0SWQiOm51bGwsImlhdCI6MTc0NzEyNzQ0MiwiZXhwIjoxNzQ3MjEzODQyfQ.pvSA7FLW_Upe0K8hBICJ3_Wp_BNGX2wXCouk9nMfV_M";
-      const url =
-        status === "all"
-          ? `http://localhost:8000/api/v1/order`
-          : `http://localhost:8000/api/v1/order?status=${status}`;
-      try {
-        const res = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!res.ok) throw new Error("Failed to fetch");
-
-        const json = await res.json();
-        const ordersFromApi = json.data.orders;
-        console.log("Response:", ordersFromApi);
-
-        const formatted = ordersFromApi.map((order: any) => ({
-          id: order.id,
-          createdAt: order.createdAt,
-          phone: order.phone,
-          address: order.address,
-          nameUser: order.nameUser,
-          email: order.email,
-          note: order.note,
-          payment: order.payment,
-          status: order.status,
-          type: order.type,
-          description: order.description,
-          listOrder: order.listOrder.map((item: any) => ({
-            dishId: item.dishId,
-            nameDish: item.nameDish,
-            number: item.number,
-            url: item.url,
-          })),
-        }));
-
-        setOrders(formatted);
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-      }
-    };
-
-    fetchOrders();
-  }, [status]);
+    if (status === "authenticated") {
+      fetchOrders();
+    }
+  }, [statuss, status]);
 
   return (
     <div className="container mx-auto p-5 2xl:px-20 2xl:py-10">
@@ -142,7 +145,7 @@ const OrderPageClient = () => {
           <TabsTrigger
             value="all"
             className={`w-[200px] ${
-              status !== "all" ? "cursor-pointer bg-gray-400" : ""
+              statuss !== "all" ? "cursor-pointer bg-gray-400" : ""
             }`}
             onClick={() => setStatus("all")}
           >
@@ -152,7 +155,7 @@ const OrderPageClient = () => {
           <TabsTrigger
             value="pending"
             className={`w-[200px] ${
-              status !== "pending" ? "cursor-pointer  bg-gray-400" : ""
+              statuss !== "pending" ? "cursor-pointer  bg-gray-400" : ""
             }`}
             onClick={() => setStatus("pending")}
           >
@@ -162,7 +165,7 @@ const OrderPageClient = () => {
           <TabsTrigger
             value="confirmed"
             className={`w-[200px] ${
-              status !== "confirmed" ? "cursor-pointer bg-gray-400" : ""
+              statuss !== "confirmed" ? "cursor-pointer bg-gray-400" : ""
             }`}
             onClick={() => setStatus("confirmed")}
           >
@@ -172,7 +175,7 @@ const OrderPageClient = () => {
           <TabsTrigger
             value="completed"
             className={`w-[200px] ${
-              status !== "completed" ? "cursor-pointer bg-gray-400" : ""
+              statuss !== "completed" ? "cursor-pointer bg-gray-400" : ""
             }`}
             onClick={() => setStatus("completed")}
           >
@@ -182,7 +185,7 @@ const OrderPageClient = () => {
           <TabsTrigger
             value="canceled"
             className={`w-[200px] ${
-              status !== "canceled" ? "cursor-pointer bg-gray-400" : ""
+              statuss !== "canceled" ? "cursor-pointer bg-gray-400" : ""
             }`}
             onClick={() => setStatus("canceled")}
           >

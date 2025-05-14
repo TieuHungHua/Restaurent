@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
 const VoucherPage = () => {
@@ -18,10 +19,8 @@ const VoucherPage = () => {
     dateEnd: "",
     discount: 0,
   });
-
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFkODQ5NGVhLTcwOTgtNGQwOS04YWE1LTIwNjZlNDg5NDUwYiIsImVtYWlsIjoic3VwZXJBZG1pbkBleGFtcGxlLmNvbSIsIm5hbWUiOiJTdXBlciBBZG1pbiIsInJvbGUiOiJTdXBlciBBZG1pbiIsImlzQmFuIjpmYWxzZSwiYWRtaW5JZCI6ImY1MzE5NjM5LWIxOWItNDkwZi1hMTE2LWZkYzZmMGRiY2Y2YSIsImd1ZXN0SWQiOm51bGwsImlhdCI6MTc0NzEwMzU5NCwiZXhwIjoxNzQ3MTg5OTk0fQ.FEP9dmUNeKpssI62ox_okBJbQ1Jv68EyS-f9VXEOCZc"; // Giả sử bạn lưu token trong localStorage
-
+  const { data: session, status } = useSession();
+  const token = session?.user.accessToken;
   const fetchAllVouchers = async () => {
     try {
       const response = await fetch(
@@ -171,15 +170,17 @@ const VoucherPage = () => {
   };
 
   useEffect(() => {
-    setIsClient(true); // Set isClient thành true khi mã chạy trên client
-    if (isValid) {
-      fetchValidVouchers(); // Tải lại danh sách vouchers
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      fetchAllVouchers(); // Tải lại danh sách vouchers
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (status === "authenticated") {
+      setIsClient(true); // Set isClient thành true khi mã chạy trên client
+      if (isValid) {
+        fetchValidVouchers(); // Tải lại danh sách vouchers
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        fetchAllVouchers(); // Tải lại danh sách vouchers
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
-  }, [currentPage]);
+  }, [currentPage, status]);
 
   if (!isClient) {
     return null; // Trả về null hoặc có thể hiển thị loading nếu chưa ở client

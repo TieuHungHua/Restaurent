@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession } from "next-auth/react";
 interface User {
   id: string;
   name: string;
@@ -14,14 +15,13 @@ interface User {
 
 export default function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { data: session, status } = useSession();
+  const token = session?.user.accessToken;
   const fetchUsers = async () => {
     try {
-      let token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFkODQ5NGVhLTcwOTgtNGQwOS04YWE1LTIwNjZlNDg5NDUwYiIsImVtYWlsIjoic3VwZXJBZG1pbkBleGFtcGxlLmNvbSIsIm5hbWUiOiJTdXBlciBBZG1pbiIsInJvbGUiOiJTdXBlciBBZG1pbiIsImlzQmFuIjpmYWxzZSwiYWRtaW5JZCI6ImY1MzE5NjM5LWIxOWItNDkwZi1hMTE2LWZkYzZmMGRiY2Y2YSIsImd1ZXN0SWQiOm51bGwsImlhdCI6MTc0NzEyMDA0MCwiZXhwIjoxNzQ3MjA2NDQwfQ.4wlsKBrREHnLBHWLg-Trh2S0PyTUsr4JgaLrkoZMSKU";
       const res = await fetch(
         `http://localhost:8000/api/v1/auth/guest?page=${currentPage}&limit=5`,
         {
@@ -38,7 +38,6 @@ export default function UserTable() {
     } catch (err) {
       console.error("Lỗi fetch users:", err);
     } finally {
-      setLoading(false);
     }
   };
   const handleBanUnban = (userId: any) => {
@@ -69,19 +68,19 @@ export default function UserTable() {
     } catch (err) {
       console.error("Lỗi fetch users:", err);
     } finally {
-      setLoading(false);
     }
   };
   useEffect(() => {
-    if (isAdmin) {
-      fetchAdmin();
-    } else {
-      fetchUsers();
+    if (status === "unauthenticated") {
+      if (isAdmin) {
+        fetchAdmin();
+      } else {
+        fetchUsers();
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Cuộn lên đầu trang
-  }, [currentPage]);
-
-  if (loading) return <p className="text-center">Đang tải...</p>;
+    // Cuộn lên đầu trang
+  }, [currentPage, status]);
 
   return (
     <div className="p-4">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 interface Dish {
@@ -20,15 +21,14 @@ interface Dish {
 }
 
 export default function ManagerDishPage() {
+  const { data: session, status } = useSession();
   const [dishes, setDishes] = useState<Dish[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [formValues, setFormValues] = useState<Partial<Dish>>({});
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFkODQ5NGVhLTcwOTgtNGQwOS04YWE1LTIwNjZlNDg5NDUwYiIsImVtYWlsIjoic3VwZXJBZG1pbkBleGFtcGxlLmNvbSIsIm5hbWUiOiJTdXBlciBBZG1pbiIsInJvbGUiOiJTdXBlciBBZG1pbiIsImlzQmFuIjpmYWxzZSwiYWRtaW5JZCI6ImY1MzE5NjM5LWIxOWItNDkwZi1hMTE2LWZkYzZmMGRiY2Y2YSIsImd1ZXN0SWQiOm51bGwsImlhdCI6MTc0NzEyMDA0MCwiZXhwIjoxNzQ3MjA2NDQwfQ.4wlsKBrREHnLBHWLg-Trh2S0PyTUsr4JgaLrkoZMSKU";
+  const token = session?.user.accessToken;
 
   const fetchDishes = async () => {
     try {
@@ -41,7 +41,6 @@ export default function ManagerDishPage() {
     } catch (err) {
       console.error("Lỗi fetch dishes:", err);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -120,11 +119,11 @@ export default function ManagerDishPage() {
   };
 
   useEffect(() => {
-    fetchDishes();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage]);
-
-  if (loading) return <p className="text-center">Đang tải...</p>;
+    if (status === "unauthenticated") {
+      fetchDishes();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [currentPage, status]);
 
   return (
     <main className="p-4">

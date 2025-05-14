@@ -1,9 +1,8 @@
-import Image from 'next/image';
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Eye, Heart } from "lucide-react";
-import Link from 'next/link';
-import { FoodItemProps } from '@/lib/interface';
-
+import Link from "next/link";
+import { FoodItemProps } from "@/lib/interface";
 
 export default function FoodItemCard({
   id,
@@ -16,7 +15,7 @@ export default function FoodItemCard({
   rating,
   type,
   image,
-  fun
+  fun,
 }: FoodItemProps) {
   return (
     <div className="flex w-full max-w-3xl rounded-lg border p-4 shadow-sm bg-white mb-[10px]">
@@ -31,8 +30,12 @@ export default function FoodItemCard({
 
           <div className="flex gap-2 mt-2 flex-wrap text-xs">
             <span className="bg-gray-200 px-2 py-1 rounded">Đã xác minh</span>
-            <span className="bg-gray-200 px-2 py-1 rounded">Số lượng: {quantity}</span>
-            <span className="bg-gray-200 px-2 py-1 rounded">{rating} Đánh giá</span>
+            <span className="bg-gray-200 px-2 py-1 rounded">
+              Số lượng: {quantity}
+            </span>
+            <span className="bg-gray-200 px-2 py-1 rounded">
+              {rating} Đánh giá
+            </span>
             <span className="bg-gray-200 px-2 py-1 rounded">{type}</span>
           </div>
 
@@ -50,7 +53,10 @@ export default function FoodItemCard({
           </div>
 
           <div className="flex gap-2">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold" onClick={fun}>
+            <Button
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold"
+              onClick={fun}
+            >
               Thêm vào giỏ hàng
             </Button>
 
@@ -63,7 +69,7 @@ export default function FoodItemCard({
             </Link>
 
             <Button variant="outline" size="icon">
-              <Heart size={18} color='red' />
+              <Heart size={18} color="red" />
             </Button>
           </div>
         </div>
