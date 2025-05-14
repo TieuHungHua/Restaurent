@@ -8,28 +8,46 @@ import { Search } from 'lucide-react';
 import { FoodItemProps } from '@/lib/interface';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import Loading from '@/components/Loading/Loading';
 
 
 const MenuPage: React.FC = () => {
-    const { data: session } = useSession()
-    const router = useRouter()
+    const { data: session, status } = useSession()
     const [category, setCategory] = useState('Tất cả');
     const [brand, setBrand] = useState('Tất cả');
-    const [from, setFrom] = useState('');
-    const [to, setTo] = useState('');
+    const [from, setFrom] = useState(1);
+    const [foodSearch, setToFood] = useState('');
     const [dishes, setDishes] = useState<any[]>([]);
-    const handleApply = () => {
+    const [totalPage, setTotalPage] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const handleApply = () => { };
 
-    };
-    // ✅ Đúng key
-
-    const searchFood = () => {
-
-    }
-    const data_food = useCallback((async () => {
+    const searchFood = async () => {
         try {
+            const res = await fetch(`http://localhost:8000/api/v1/dish/search-by-name?name=${foodSearch}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session?.user.accessToken}`
+                    },
+                }
 
-            const response = await fetch('http://localhost:8000/api/v1/dish/guest', {
+            )
+            if (!res.ok) {
+                throw new Error('Fetch failed: 1 ' + res.status);
+            }
+            setIsLoading(false)
+            const data = await res.json()
+            setDishes(data.data)
+        } catch (e) {
+            alert('Fetch data search error ')
+        }
+    }
+    const fetchDataFood = async () => {
+        try {
+            setIsLoading(false)
+            const response = await fetch(`http://localhost:8000/api/v1/dish/guest?page=${from}&limit=8`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,18 +56,23 @@ const MenuPage: React.FC = () => {
 
             })
             if (!response.ok) {
-                throw new Error('Fetch failed: ' + response.status);
+                throw new Error('Fetch failed: 2 ' + response.status);
             }
+            setIsLoading(true)
             const data = await response.json();
-            setDishes(data.data)
-            console.log(data.data)
-        } catch (err) {
-            console.error(err);
+            setDishes(data.data.dishes)
+            setTotalPage(data.data.totalPages)
+            window.scrollTo({ top: 0, behavior: 'smooth', });
+        } catch (error) {
+            setIsLoading(false)
+            console.error("Lỗi khi lấy dữ liệu:", error);
         }
-    }), [])
+    }
     useEffect(() => {
-        data_food()
-    }, [data_food])
+        if (status === 'authenticated') {
+            fetchDataFood();
+        }
+    }, [status])
 
     const handleAddToCart = async (id: string) => {
         try {
@@ -67,7 +90,7 @@ const MenuPage: React.FC = () => {
 
             })
             if (!response.ok) {
-                throw new Error('Fetch failed: ' + response.status);
+                throw new Error('Fetch failed: 3 ' + response.status);
             }
             alert("Món ăn đã được thêm!")
         } catch (err) {
@@ -113,6 +136,9 @@ const MenuPage: React.FC = () => {
                         type="text"
                         placeholder="Tìm món ăn, bài viết..."
                         className="pl-10"
+                        onChange={(e) => {
+                            setToFood(e.target.value)
+                        }}
                     />
                     <Search
                         className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400"
@@ -142,17 +168,50 @@ const MenuPage: React.FC = () => {
                             }}
                         />)
                     })}
-                    {/* <FoodItemCard
-                        name="Cơm chiên hải sản"
-                        slug="com-chien-hai-san"
-                        description="Cơm chiên hải sản mang đến hương vị đặc sắc khi dùng nguyên liệu chính là gạo Basmati - một loại gạo Ấn Độ"
-                        priceOld={120000}
-                        priceNew={99000}
-                        quantity={31}
-                        rating={0}
-                        type="Món Việt"
-                        image="https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg"
-                    /> */}
+                    {isLoading ? (
+                        <div className="flex justify-center w-[750px] mt-6 space-x-2">
+                            {/* Trang đầu */}
+                            {from > 1 && (
+                                <button
+                                    onClick={() => setFrom(1)} // Đặt currentPage = 1 khi nhấn nút Trang đầu
+                                    disabled={from === 1}
+                                    className=" select-none cursor-pointer px-3 py-1 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-default"
+                                >
+                                    Đầu
+                                </button>
+                            )}
+                            {/* Trang trước */}
+                            <button
+                                onClick={() => setFrom((prev) => Math.max(prev - 1, 1))}
+                                disabled={from === 1}
+                                className=" select-none cursor-pointer px-3 py-1 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-default"
+                            >
+                                Trước
+                            </button>
+                            {/* Hiển thị trang hiện tại */}
+                            <span className="px-3 py-1 select-none">{`Trang ${from} / ${totalPage}`}</span>
+                            {/* Trang sau */}
+                            <button
+                                onClick={() =>
+                                    setFrom((prev) => Math.min(prev + 1, totalPage))
+                                }
+                                disabled={from === totalPage}
+                                className=" select-none cursor-pointer px-3 py-1 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-default"
+                            >
+                                Sau
+                            </button>
+                            {/* Trang cuối */}
+                            {from < totalPage && (
+                                <button
+                                    onClick={() => setFrom(totalPage)} // Đặt currentPage = totalPages khi nhấn nút Trang cuối
+                                    disabled={from === totalPage}
+                                    className=" select-none cursor-pointer px-3 py-1 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-default"
+                                >
+                                    Cuối
+                                </button>
+                            )}
+                        </div>) : (<></>)
+                    }
                 </div>
             </main>
 

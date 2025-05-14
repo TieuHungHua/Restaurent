@@ -7,60 +7,94 @@ import { CartItem, CartItemProps } from '../../components/Cart/cartItem';
 import PaymentSumary from '../../components/Cart/paymentSumary';
 import { useSession } from 'next-auth/react';
 
-
-interface CartSummaryProps {
-    total: number;
-    onApplyCoupon: (code: string) => void;
-    onCheckout: () => void;
+export interface PaymentSumaryProps {
+    name: string;
+    phone: string;
+    email: string;
+    address: string;
+    noted: string;
+    typeCheckout: string;
 
 }
-
 const Cart = ({ total, onApplyCoupon, onCheckout }: CartSummaryProps) => {
     const [itemCart, setItemCart] = useState<CartItemProps[]>([])
-    const { data: session } = useSession()
-    useEffect(() => {
-
-        const fetchDataD = async () => {
-            console.log("tôi đang fetch!!")
-            try {
-                const response = await fetch('http://localhost:8000/api/v1/cart', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${session?.user.accessToken}`
-                    },
+    const { data: session, status } = useSession()
+    const [userInfor, setUserInfor] = useState<PaymentSumaryProps>({
+        name: '',
+        phone: '',
+        email: '',
+        address: '',
+        noted: '',
+        typeCheckout: 'momo',
+    });
+    const handleCheckout = async () => {
+        const cartItem: { dishId: string, number: number }[] = itemCart.map((item) => { return { dishId: item.id, number: Number(item.quantity) } })
+        console.log(session?.user.accessToken)
+        try {
+            const res = await fetch('http://localhost:8000/api/v1/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session?.user.accessToken}`
+                }, body: JSON.stringify({
+                    type: userInfor.typeCheckout,
+                    nameUser: userInfor.name,
+                    email: userInfor.email,
+                    note: userInfor.noted,
+                    phone: userInfor.phone,
+                    address: userInfor.address,
+                    orderAndDish: cartItem,
                 })
-                if (!response.ok) {
-                    throw new Error('Fetch failed: ' + response.status);
-                }
-                const data = await response.json()
-                const newCartItems = data.data.map((i: any) => ({
-                    id: i.id,
-                    name: i.dish.name,
-                    imageUrl: i.dish.url,
-                    price: i.dish.priceNew,
-                    quantity: i.number,
-                    onQuantityChange: (newQuantity: number) => {
-                        console.log('Quantity changed to:', newQuantity);
-                    },
-                    onDelete: () => {
-                        console.log('Delete item with id:', i.id);
-                    }
-                }));
-
-                setItemCart(newCartItems);
-            } catch {
-                alert("Fetch thất bại!")
+            })
+            if (!res.ok) {
+                throw new Error('Fetch post failed: ' + res.status);
             }
-            console.log(itemCart)
+        } catch (e) {
+            console.log('Lỗi fetch data ở cart/handleCheckout' + e)
         }
-        fetchDataD()
+    }
 
-    }, [])
+    const fetchDataD = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/cart', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session?.user.accessToken}`
+                },
+            })
+            if (!response.ok) {
+                throw new Error('Fetch failed: ' + response.status);
+            }
+            const data = await response.json();
+            const newCartItems = data.data.map((i: any) => ({
+                id: i.dishId,
+                name: i.dish.name,
+                imageUrl: i.dish.url,
+                price: i.dish.priceNew,
+                quantity: i.number,
+                onQuantityChange: (newQuantity: number) => {
+                    console.log('Quantity changed to:', newQuantity);
+                },
+                onDelete: () => {
+                    console.log('Delete item with id:', i.id);
+                }
+            }));
+
+            setItemCart(newCartItems);
+        } catch (e) {
+            alert("Fetch thất bại! " + e)
+        }
+        console.log(itemCart)
+    }
+
+    useEffect(() => {
+        if (status === 'authenticated') {
+            fetchDataD();
+        }
+    }, [status])
 
     const handleDelete = (id: string) => {
-
-
         const fetchDataD = async () => {
             console.log("tôi đang fetch!!")
             try {
@@ -106,22 +140,17 @@ const Cart = ({ total, onApplyCoupon, onCheckout }: CartSummaryProps) => {
                         onDelete={() => handleDelete(item.id)}
                     />
                 ))}
-                {/* <CartItem
-                    imageUrl="https://sakos.vn/wp-content/uploads/2023/10/pad_thai__1__f7bd4f4931604756939e6ee41ec228d8.jpg"
-                    name="Ức gà đút lò phủ lá chanh"
-                    price={195000}
-                    quantity={3}
-                    onQuantityChange={(q) => console.log("Cập nhật:", q)}
-                    onDelete={() => console.log("Xoá item")}
-                /> */}
+
                 <CartSummary
                     total={itemCart.reduce((acc, item) => acc + item.price * item.quantity, 0)}
                     onApplyCoupon={(code) => console.log("Mã giảm giá:", code)}
-                    onCheckout={() => console.log("Đi đến thanh toán")}
+                    onCheckout={handleCheckout}
                 />
             </div>
             <div>
-                <PaymentSumary />
+                <PaymentSumary
+                    {...userInfor}
+                    setUserInfor={setUserInfor} />
             </div>
 
         </div>

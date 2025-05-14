@@ -41,6 +41,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: "/auth/Login",
     },
+    session: {
+        strategy: "jwt",
+        maxAge: 24 * 60 * 60
+    },
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
@@ -57,7 +61,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             return session
         },
-        async redirect({ url, baseUrl }) {
+
+        async redirect() {
             // Chuyển hướng người dùng sau khi đăng nhập thành công
             // Nếu bạn muốn chuyển hướng về trang chủ, trả về baseUrl
             return '/'; // Hoặc bạn có thể trả về URL khác như '/dashboard'
